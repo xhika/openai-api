@@ -22,17 +22,27 @@ $ENGINE = $_ENV['ENGINE_ID'];
  */
 try {
 	$client = new Client();
-	$file = file_get_contents('./src/prompt.txt');
-	$file = trim($file);
+	/**
+	 * Use this if you manually want to paste text into /src/prompt.txt file
+	 */
+	// $file = file_get_contents('./src/prompt.txt');
+	// $file = trim($file);
+	// $file = filter_var($file,FILTER_SANITIZE_SPECIAL_CHARS);
+	
+	if(!isset($_POST['input'])) {
+		return;
+	}
+	$input = filter_var($_POST['input'],FILTER_SANITIZE_SPECIAL_CHARS);
+
+	
 	$url = 'https://api.openai.com/v1/engines/'.$ENGINE.'/completions';
-	$file = filter_var($file,FILTER_SANITIZE_SPECIAL_CHARS);
 	$response = $client->request('POST', $url, [
 	    'headers' => [
 			"Content-Type" => "application/json",
 			"Authorization" => "Bearer " . $API_KEY,
     	],
     	'json' => [
-    	  	"prompt" => $file,
+    	  	"prompt" => $input, // Change this to $file if you want to paste in /src/prompt.txt
     	  	"max_tokens" => 100,
     	  	"temperature" => 0.9,
   			"top_p" => 1,
@@ -44,7 +54,6 @@ try {
   			"stop" => ["\n"]
     	]
 	]);
-	
 	$contents = $response->getBody()->getContents();
 	$contents = json_decode($contents, true);
 
