@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ .'/vendor/autoload.php';
 
+
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
@@ -22,8 +23,9 @@ $ENGINE = $_ENV['ENGINE_ID'];
 try {
 	$client = new Client();
 	$file = file_get_contents('./src/prompt.txt');
+	$file = trim($file);
 	$url = 'https://api.openai.com/v1/engines/'.$ENGINE.'/completions';
-
+	$file = filter_var($file,FILTER_SANITIZE_SPECIAL_CHARS);
 	$response = $client->request('POST', $url, [
 	    'headers' => [
 			"Content-Type" => "application/json",
@@ -31,7 +33,7 @@ try {
     	],
     	'json' => [
     	  	"prompt" => $file,
-    	  	"max_tokens" => 5,
+    	  	"max_tokens" => 100,
     	  	"temperature" => 0.9,
   			"top_p" => 1,
   			"presence_penalty" => 0,
@@ -39,7 +41,7 @@ try {
   			"n" => 1,
   			"stream" => false,
   			"logprobs" => null,
-  			"stop" => "\n"
+  			"stop" => ["\n"]
     	]
 	]);
 	
@@ -48,10 +50,10 @@ try {
 
 	foreach ($contents['choices']  as $choices) {
 		echo $choices['text'];
+		// dd($choices);
 	}
 } catch (Exception $e) {
 	echo $e->getMessage();
 }
-
 
 
