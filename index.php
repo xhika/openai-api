@@ -23,7 +23,7 @@
 		</p>
 	</div>
 </div>
-<div class="max-w-sm mx-auto flex justify-end lg:max-w-lg lg:mx-auto">
+<div class="max-w-sm mx-auto flex justify-end lg:max-w-lg">
 	<input type="submit" value="Send" class="rounded py-3 hover:bg-pink-800 px-6 bg-pink-600 text-white font-semibold">
 </div>
 </form>
